@@ -4,11 +4,11 @@ API em Python (FastAPI + SQLite) para cadastro de usuários, login com JWT e ace
 
 ## Rotas
 
-| Método | Rota        | Descrição                                       |
-| ------ | ----------- | ----------------------------------------------- |
-| POST   | `/register` | Cadastra um usuário (`name`, `email`, `password`) |
-| POST   | `/login`    | Retorna um token JWT (`email`, `password`)       |
-| GET    | `/profile`  | Retorna nome e e-mail do usuário autenticado     |
+| Método | Rota        | Descrição                                                        |
+| ------ | ----------- | ---------------------------------------------------------------- |
+| POST   | `/register` | Cadastra um usuário (JSON: `name`, `email`, `password`)          |
+| POST   | `/token`    | Retorna um token JWT (formulário: `username` = e-mail, `password`) |
+| GET    | `/users/me` | Retorna nome e e-mail do usuário autenticado                     |
 
 ## Ambiente virtual e dependências
 
@@ -31,11 +31,9 @@ O servidor sobe em `http://127.0.0.1:8000` e o banco `users.db` é criado automa
 Com o servidor rodando, acesse `http://127.0.0.1:8000/docs`, a documentação interativa gerada pelo FastAPI:
 
 1. Em **POST /register**, clique em **Try it out**, preencha nome, e-mail e senha e clique em **Execute** (retorna `201`).
-2. Em **POST /login**, faça o mesmo com e-mail e senha e copie o `access_token` da resposta.
-3. Acesse a rota protegida enviando o token no header `Authorization`:
-
-```bash
-curl.exe http://127.0.0.1:8000/profile -H "Authorization: Bearer <token>"
-```
+2. Clique em **Authorize**, informe o e-mail no campo `username` e a senha no campo `password`.
+3. Em **GET /users/me**, clique em **Try it out** e **Execute**: o token é enviado automaticamente.
 
 Sem token, ou com um token inválido ou expirado, a resposta é `401`.
+
+Também é possível testar pelo Postman: no `/token`, envie o corpo como `x-www-form-urlencoded`, e no `/users/me`, use o token na aba **Authorization** com o tipo **Bearer Token**.
