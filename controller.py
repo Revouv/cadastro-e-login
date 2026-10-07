@@ -4,7 +4,7 @@ from fastapi.security import OAuth2PasswordBearer
 
 import repository
 from schemas import LoginRequest, ProfileResponse, RegisterRequest
-from security import create_token, decode_token, hash_password, verify_password
+from security import DUMMY_HASH, create_token, decode_token, hash_password, verify_password
 
 router = APIRouter()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login", auto_error=False)
@@ -22,7 +22,8 @@ def register(data: RegisterRequest):
 @router.post("/login")
 def login(data: LoginRequest):
     user = repository.get_user_by_email(data.email.strip().lower())
-    if not user or not verify_password(data.password, user["password_hash"]):
+    password_hash = user["password_hash"] if user else DUMMY_HASH
+    if not verify_password(data.password, password_hash) or not user:
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "E-mail ou senha inválidos")
     return {"access_token": create_token(user["email"]), "token_type": "bearer"}
 
